@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe "StaticPages", type: :request do
-  let(:base_title) { "Ruby on Rails Tutorial Sample App" }
 
   describe "root" do
     it "正常にレスポンスを返すこと" do
@@ -12,37 +11,49 @@ RSpec.describe "StaticPages", type: :request do
 
   describe "#home" do
     it "正常にレスポンスを返すこと" do
-      get static_pages_home_path
+      get root_path
       expect(response).to have_http_status 200
     end
 
     it "Ruby on Rails Tutorial sample Appが含まれること" do
-      get static_pages_home_path
-      expect(response.body).to include "#{base_title}"
+      get root_path
+      expect(response.body).to include full_title("")
     end
   end
 
   describe "#help" do
     it "正常にレスポンスを返すこと" do
-      get static_pages_help_path
+      get help_path
       expect(response).to have_http_status 200
     end
 
     it "Help | Ruby on Rails Tutorial sample Appが含まれること" do
-      get static_pages_help_path
-      expect(response.body).to include "Help | #{base_title}"
+      get help_path
+      expect(response.body).to include full_title("Help")
     end
   end
 
   describe "#about" do
     it "正常にレスポンスを返すこと" do
-      get static_pages_about_path
+      get about_path
       expect(response).to have_http_status 200
     end
 
     it "About | Ruby on Rails Tutorial sample Appが含まれること" do
-      get static_pages_about_path
-      expect(response.body).to include "About | #{base_title}"
+      get about_path
+      expect(response.body).to include full_title("About")
+    end
+  end
+
+  describe "#contact" do
+    it "正常にレスポンスを返すこと" do 
+      get contact_path
+      expect(response).to have_http_status 200
+    end
+
+    it "Contact | Ruby on Rails Tutorial sample Appが含まれること" do
+      get contact_path
+      expect(response.body).to include full_title("Contact")
     end
   end
 end
