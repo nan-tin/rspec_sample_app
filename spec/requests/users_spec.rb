@@ -16,7 +16,7 @@ RSpec.describe "Users", type: :request do
   describe "POST /users #create" do
     it "無効な値だと登録されないこと" do
       expect {
-        post users_path, params { users: { name: "",
+        post users_path, params: { users: { name: "",
                                            email: "user@invalid",
                                            password: "foo",
                                            password_confirmation: "bar" } }
@@ -32,7 +32,7 @@ RSpec.describe "Users", type: :request do
 
     it "登録されること" do
       expect {
-        post user_path, params: user_params
+        post users_path, params: user_params
       }.to change(User, :count).by 1
     end
     
