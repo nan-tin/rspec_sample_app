@@ -69,7 +69,7 @@ Rails.application.configure do
 
   # Use a real queuing backend for Active Job (and separate queues per environment).
   # config.active_job.queue_adapter = :resque
-  # config.active_job.queue_name_prefix = "rspec_sample_app_production"
+  # config.active_job.queue_name_prefix = "sample_app_production"
 
   config.action_mailer.perform_caching = false
 
@@ -86,6 +86,19 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
+
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.delivery_method = :smtp
+  host = 'https://rspec-sample-app.onrender.com'
+  config.action_mailer.default_url_options = { host: host }
+  ActionMailer::Base.smtp_settings = {
+    :port           => 2525,
+    :address        => 'smtp.mailgun.org',
+    :user_name      => ENV['MAILGUN_SMTP_LOGIN'],
+    :password       => ENV['MAILGUN_SMTP_PASSWORD'],
+    :domain         => 'sandboxa40c6c5f00694d2c92e81a82a9941588.mailgun.org',
+    :authentication => :plain,
+  }
 
   # Enable DNS rebinding protection and other `Host` header attacks.
   # config.hosts = [

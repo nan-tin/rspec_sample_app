@@ -30,16 +30,30 @@ RSpec.describe "Users", type: :request do
                                   password: "password",
                                   password_confirmation: "password" } } }
 
+    before do
+       ActionMailer::Base.deliveries.clear
+      end
+      
+    it 'メールが1件存在すること' do
+       post users_path, params: user_params
+       expect(ActionMailer::Base.deliveries.size).to eq 1
+    end
+
+     it '登録時点ではactivateされていないこと' do
+       post users_path, params: user_params
+       expect(User.last).to_not be_activated
+    end
+
     it "登録されること" do
       expect {
         post users_path, params: user_params
       }.to change(User, :count).by 1
     end
     
-    it "users/showにリダイレクトされること" do
+    it "rootにリダイレクトされること" do
       post users_path, params: user_params
       user = User.last
-      expect(response).to redirect_to user
+      expect(response).to redirect_to root_url
     end
 
     it "flashが表示されること" do
@@ -47,9 +61,9 @@ RSpec.describe "Users", type: :request do
       expect(flash).to be_any
     end
 
-    it "ログイン状態であること" do
+    it "ログイン状態でないこと" do
       post users_path, params: user_params
-      expect(is_logged_in?).to be_truthy
+      expect(is_logged_in?).to be_falsey
     end
   end
 
@@ -205,7 +219,16 @@ RSpec.describe "Users", type: :request do
       expect(response).to redirect_to login_path
     end
 
+    it 'activateされていないユーザは表示されないこと' do
+     not_activated_user = FactoryBot.create(:malory)
+     log_in user
+     get users_path
+     expect(response.body).to_not include not_activated_user.name
+   end
+
     describe "pagination" do
+      let!(:user) { FactoryBot.create(:user) }
+
       before do
         50.times do
           FactoryBot.create(:continuous_users)
@@ -215,7 +238,7 @@ RSpec.describe "Users", type: :request do
       end
 
       it 'div.paginationが存在すること' do
-      expect(response.body).to include('<ul class="pagination"')
+        expect(response.body).to include('<ul class="pagination"')
       end
 
       it "ユーザーごとのリンクが存在すること" do
@@ -267,4 +290,15 @@ RSpec.describe "Users", type: :request do
       end
     end
   end
+
+  describe 'get /users/{id}' do
+   it '有効化されていないユーザの場合はrootにリダイレクトすること' do
+     user = FactoryBot.create(:user)
+     not_activated_user = FactoryBot.create(:malory)
+  
+     log_in user
+     get user_path(not_activated_user)
+     expect(response).to redirect_to root_path
+   end
+ end
 end
