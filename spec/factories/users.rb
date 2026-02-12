@@ -13,6 +13,13 @@ FactoryBot.define do
       email { "duchess@example.gov" }
       admin { false }
     end
+
+    factory :lana do
+      name { "Lana Kane" }
+      email { "lana@example.gov" }
+      admin { false }
+    end
+
   end
 
   factory :malory, class: User do
